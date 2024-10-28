@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -22,15 +22,14 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y gperf cmake g++ zlib1g-dev
-        echo "gperf path:" $(which gperf)
+        choco install gperf cmake --install-args "'/InstallDir=C:\Program Files\gperf'"
+        echo "gperf path:" $(where gperf)
 
     - name: Configure CMake
       env:
-        GPERF_EXECUTABLE: $(which gperf)
-      run: cmake -B build -S . -DGPERF_EXECUTABLE:FILEPATH=$(which gperf)
+        GPERF_EXECUTABLE: "C:\\Program Files\\gperf\\gperf.exe"
+      run: cmake -B build -S . -DGPERF_EXECUTABLE:FILEPATH="C:\\Program Files\\gperf\\gperf.exe"
 
     - name: Build
       run: cmake --build build --config Release
-      
+
