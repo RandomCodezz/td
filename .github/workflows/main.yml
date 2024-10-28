@@ -16,19 +16,24 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-                    
+
     - name: Set up CMake
       uses: threeal/cmake-action@v2.0.0
 
-    - name: Install dependencies
+    - name: Download and Install GnuWin32 gperf
       run: |
-        choco install gperf cmake --install-args "'/InstallDir=C:\Program Files\gperf'"
-        echo "gperf path:" $(where gperf)
+        Invoke-WebRequest -Uri "https://sourceforge.net/projects/gnuwin32/files/gperf/3.0.1/gperf-3.0.1-bin.exe/download" -OutFile "gperf-3.0.1-bin.exe"
+        Start-Process -FilePath "gperf-3.0.1-bin.exe" -ArgumentList "/silent", "/dir=C:\GnuWin32" -NoNewWindow -Wait
+
+    - name: Install other dependencies
+      run: choco install zlib cmake
 
     - name: Configure CMake
       env:
-        GPERF_EXECUTABLE: "C:\\Program Files\\gperf\\gperf.exe"
-      run: cmake -B build -S . -DGPERF_EXECUTABLE:FILEPATH="C:\\Program Files\\gperf\\gperf.exe"
+        ZLIB_LIBRARY: "C:\\Program Files\\zlib\\lib\\zlib.lib"
+        ZLIB_INCLUDE_DIR: "C:\\Program Files\\zlib\\include"
+        GPERF_EXECUTABLE: "C:\\GnuWin32\\bin\\gperf.exe"
+      run: cmake -B build -S . -DZLIB_LIBRARY="%ZLIB_LIBRARY%" -DZLIB_INCLUDE_DIR="%ZLIB_INCLUDE_DIR%" -DGPERF_EXECUTABLE="%GPERF_EXECUTABLE%"
 
     - name: Build
       run: cmake --build build --config Release
