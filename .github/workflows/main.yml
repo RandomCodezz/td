@@ -1,0 +1,32 @@
+name: Build Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up CMake
+      uses: actions/setup-cmake@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gperf cmake g++ zlib1g-dev
+
+    - name: Configure CMake
+      run: cmake -B build -S . -DGPERF_EXECUTABLE:FILEPATH="/usr/bin/gperf"
+
+    - name: Build
+      run: cmake --build build --config Release
+      
