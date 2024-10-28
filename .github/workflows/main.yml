@@ -24,6 +24,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y gperf cmake g++ zlib1g-dev
+        export PATH="$PATH:/usr/bin"
 
     - name: Configure CMake
       run: cmake -B build -S . -DGPERF_EXECUTABLE:FILEPATH="/usr/bin/gperf"
