@@ -1,0 +1,18 @@
+name: Build TDLib
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++ zlib1g-dev
+      - name: Build TDLib
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build . --target install
+          
